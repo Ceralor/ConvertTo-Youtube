@@ -9,3 +9,5 @@ To install the ConvertTo-Youtube cmdlet, clone the repo to your Powershell profi
 $ProfilePath = (Get-Item $profile).DirectoryName
 . "$ProfilePath\ConvertTo-Youtube\ConvertTo-Youtube.ps1"
 ```
+
+Because PowerShell and ffmpeg are both cross-platform with the same flags, this script will also work on Linux. It currently has issues with files with spaces or odd characters in the name however.
