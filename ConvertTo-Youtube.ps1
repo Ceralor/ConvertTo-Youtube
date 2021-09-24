@@ -20,6 +20,7 @@ function ConvertTo-Youtube {
         [Alias("af")][System.Collections.ArrayList]$AudioFilter,
         [Alias("f")][switch]$Force
     )
+    $Verbose = $MyInvocation.BoundParameters["Verbose"].IsPresent -eq $true
     if (($StartCut -gt 0) -and ($CutLength -eq 0)) {
         Write-Error "Must specify a value greater than zero for cut length if specifying start time"
         exit 2
@@ -70,7 +71,7 @@ function ConvertTo-Youtube {
 
     $ArgumentList.Add($OutputPath) > $null
 
-    if ($MyInvocation.BoundParameters["Verbose"].IsPresent) {
+    if ($Verbose) {
         $ArgumentList.AddRange(@("-loglevel","verbose"))
     } else {
         $ArgumentList.AddRange(@("-loglevel","fatal"))
