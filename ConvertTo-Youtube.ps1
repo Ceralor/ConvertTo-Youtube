@@ -29,7 +29,7 @@ function ConvertTo-Youtube {
         Write-Verbose "No output name specified, assuming suffix _output.mp4" -Verbose:$Verbose
         $OutputPath = $InputPath + "_output.mp4"
     }
-    $ArgumentList = [System.Collections.ArrayList]@('-i',$InputPath,'-b:v','10M','-minrate:v','8M','-maxrate:v','12M')
+    $ArgumentList = [System.Collections.ArrayList]@('-i', $InputPath, '-b:v', '10M', '-minrate:v', '8M', '-maxrate:v', '12M', '-bufsize', '60M','-c:a','aac','-b:a','512k','-ar','48000')
     if ($VideoFilter -eq $null) { $VideoFilter = New-Object -TypeName System.Collections.ArrayList }
     if ($AudioFilter -eq $null) { $AudioFilter = New-Object -TypeName System.Collections.ArrayList }
     if ($FadeInOut) {
