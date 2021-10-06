@@ -37,14 +37,14 @@ function ConvertTo-Youtube {
     if ($AudioFilter -eq $null) { $AudioFilter = New-Object -TypeName System.Collections.ArrayList }
     if ($FadeInOut) {
         if ($CutLength -ne 0) {
-            $fadeouttime = [float]$StartCut + [float]$CutLength - $FadeLength
+            $FadeOutTime = [float]$StartCut + [float]$CutLength - $FadeLength
         } else {
             Write-Verbose "Using file information as no cut length was specified" -Verbose:$Verbose
-            $fadeouttime = [float]$fileinfo.streams[0].duration - $FadeLength
+            $FadeOutTime = [float]$FileInfo.streams[0].duration - $FadeLength
         }
-        $VFilterFadeArgs = @("fade=t=in:st=$StartCut`:d=$FadeLength", "fade=t=out:st=$fadeouttime`:d=$FadeLength")
+        $VFilterFadeArgs = @("fade=t=in:st=$StartCut`:d=$FadeLength", "fade=t=out:st=$FadeOutTime`:d=$FadeLength")
         $VideoFilter.AddRange($VFilterFadeArgs)
-        $AFilterFadeArgs = @("afade=t=in:st=$StartCut`:d=$FadeLength", "afade=t=out:st=$fadeouttime`:d=$FadeLength")
+        $AFilterFadeArgs = @("afade=t=in:st=$StartCut`:d=$FadeLength", "afade=t=out:st=$FadeOutTime`:d=$FadeLength")
         $AudioFilter.AddRange($AFilterFadeArgs)
     }
 
