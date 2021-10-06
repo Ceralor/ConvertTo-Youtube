@@ -29,6 +29,7 @@ function ConvertTo-Youtube {
         Write-Verbose "No output name specified, assuming suffix _output.mp4" -Verbose:$Verbose
         $OutputPath = $InputPath + "_output.mp4"
     }
+    $fileinfo = ConvertFrom-Json ((ffprobe -v quiet -print_format json -show_format -show_streams -print_format json "$InputPath") -join " ") -Verbose:$Verbose
     $ArgumentList = [System.Collections.ArrayList]@('-i', $InputPath, '-b:v', '10M', '-minrate:v', '8M', '-maxrate:v', '12M', '-bufsize', '60M','-c:a','aac','-b:a','512k','-ar','48000')
     if ($VideoFilter -eq $null) { $VideoFilter = New-Object -TypeName System.Collections.ArrayList }
     if ($AudioFilter -eq $null) { $AudioFilter = New-Object -TypeName System.Collections.ArrayList }
@@ -36,8 +37,7 @@ function ConvertTo-Youtube {
         if ($CutLength -ne 0) {
             $fadeouttime = [float]$StartCut + [float]$CutLength - $FadeLength
         } else {
-            Write-Verbose "Getting file information as no cut length was specified" -Verbose:$Verbose
-            $fileinfo = ConvertFrom-Json ((ffprobe -v quiet -print_format json -show_format -show_streams -print_format json "$InputPath") -join " ") -Verbose:$Verbose
+            Write-Verbose "Using file information as no cut length was specified" -Verbose:$Verbose
             $fadeouttime = [float]$fileinfo.streams[0].duration - $FadeLength
         }
         $VFilterFadeArgs = @("fade=t=in:st=$StartCut`:d=$FadeLength", "fade=t=out:st=$fadeouttime`:d=$FadeLength")
