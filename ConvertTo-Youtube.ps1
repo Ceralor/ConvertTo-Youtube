@@ -16,6 +16,7 @@ function ConvertTo-Youtube {
         [Alias("fade")][switch]$FadeInOut,
         [Alias("fadetime")][float]$FadeLength = 1.5,
         [Alias("fps")][int]$Framerate = "0",
+        [Alias("ba")][string]$AudioBitrate = "384k",
         [Alias("vf")][System.Collections.ArrayList]$VideoFilter,
         [Alias("af")][System.Collections.ArrayList]$AudioFilter,
         [Alias("f")][switch]$Force
@@ -29,8 +30,9 @@ function ConvertTo-Youtube {
         Write-Verbose "No output name specified, assuming suffix _output.mp4" -Verbose:$Verbose
         $OutputPath = $InputPath + "_output.mp4"
     }
-    $fileinfo = ConvertFrom-Json ((ffprobe -v quiet -print_format json -show_format -show_streams -print_format json "$InputPath") -join " ") -Verbose:$Verbose
-    $ArgumentList = [System.Collections.ArrayList]@('-i', $InputPath, '-b:v', '10M', '-minrate:v', '8M', '-maxrate:v', '12M', '-bufsize', '60M','-c:a','aac','-b:a','512k','-ar','48000')
+    $FileInfo = ConvertFrom-Json ((ffprobe -v quiet -print_format json -show_format -show_streams -print_format json "$InputPath") -join " ") -Verbose:$Verbose
+    $SampleRate = $FileInfo.streams | Where-Object { $_.codec_type -eq "audio" } | Select-Object -Property sample_rate -First 1  -ExpandProperty sample_rate
+    $ArgumentList = [System.Collections.ArrayList]@('-i', $InputPath, '-b:v', '10M', '-minrate:v', '8M', '-maxrate:v', '12M', '-bufsize', '60M','-c:a','aac','-b:a',$AudioBitrate,'-ar',$SampleRate)
     if ($VideoFilter -eq $null) { $VideoFilter = New-Object -TypeName System.Collections.ArrayList }
     if ($AudioFilter -eq $null) { $AudioFilter = New-Object -TypeName System.Collections.ArrayList }
     if ($FadeInOut) {
